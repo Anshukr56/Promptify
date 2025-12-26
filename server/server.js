@@ -10,10 +10,14 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+
 await connectDB();
 
 app.use("/api/user", userRouter);
 app.use("/api/image", imageRouter);
+
 app.get("/", (req, res) => res.send("API WORKING"));
 
-app.listen(PORT, () => console.log("Server running on port " + PORT)); // ✅ Added a space
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Server running on network on port " + PORT);
+});
