@@ -82,8 +82,8 @@ const userCredits = async (req, res) => {
       user.credit !== undefined
         ? user.credit
         : user.creditBalance !== undefined
-        ? user.creditBalance
-        : 0;
+          ? user.creditBalance
+          : 0;
 
     return res.json({
       success: true,
