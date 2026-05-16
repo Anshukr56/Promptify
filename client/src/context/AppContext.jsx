@@ -12,12 +12,18 @@ export const AppContextProvider = ({ children }) => {
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  // 🔹 Load user + credit
+  // ================= LOAD CREDIT =================
   const loadCreditData = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/user/credits`, {
-        headers: { token },
-      });
+      const response = await axios.post(
+        `${backendUrl}/api/user/credits`,
+        {},
+        {
+          headers: { token },
+        },
+      );
+
+      const data = response.data;
 
       if (data.success) {
         setCredit(data.credit);
@@ -29,10 +35,10 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Generate image
+  // ================= GENERATE IMAGE =================
   const generateImage = async (prompt) => {
     try {
-      const { data } = await axios.post(
+      const response = await axios.post(
         `${backendUrl}/api/image/generate-image`,
         { prompt },
         {
@@ -40,24 +46,25 @@ export const AppContextProvider = ({ children }) => {
         },
       );
 
+      const data = response.data;
+
       if (data.success) {
-        await loadCreditData();
+        setCredit(data.creditBalance);
         return data.resultImage;
       } else {
         toast.error(data.message);
-        await loadCreditData();
 
-        // ✅ return redirect instead of navigating here
-        if (data.creditBalance === 0) {
+        if (data.creditBalance <= 0) {
           return { redirect: "/buy" };
         }
       }
     } catch (error) {
+      console.error(error);
       toast.error(error.message);
     }
   };
 
-  // 🔹 Logout
+  // ================= LOGOUT =================
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
@@ -65,7 +72,7 @@ export const AppContextProvider = ({ children }) => {
     setCredit(0);
   };
 
-  // 🔹 Auto load when token changes
+  // ================= AUTO LOAD =================
   useEffect(() => {
     if (token) {
       loadCreditData();

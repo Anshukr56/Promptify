@@ -4,7 +4,8 @@ import axios from "axios";
 
 export const generateImage = async (req, res) => {
   try {
-    const { userId, prompt } = req.body;
+    const { prompt } = req.body;
+    const userId = req.userId;
 
     if (!userId || !prompt) {
       return res.json({ success: false, message: "Missing details" });
@@ -36,7 +37,7 @@ export const generateImage = async (req, res) => {
           "x-api-key": process.env.CLIPDROP_API,
         },
         responseType: "arraybuffer",
-      }
+      },
     );
 
     const base64Image = Buffer.from(data, "binary").toString("base64");
@@ -45,7 +46,7 @@ export const generateImage = async (req, res) => {
     const updatedUser = await userModel.findByIdAndUpdate(
       user._id,
       { $inc: { creditBalance: -1 } },
-      { new: true }
+      { new: true },
     );
 
     return res.json({

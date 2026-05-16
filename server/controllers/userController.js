@@ -69,7 +69,7 @@ const loginUser = async (req, res) => {
 // ================= USER CREDITS =================
 const userCredits = async (req, res) => {
   try {
-    const { userId } = req.body; // set by userAuth middleware
+    const userId = req.userId; // set by userAuth middleware
 
     const user = await userModel.findById(userId);
 
@@ -78,16 +78,9 @@ const userCredits = async (req, res) => {
     }
 
     // Support both possible field names
-    const credit =
-      user.credit !== undefined
-        ? user.credit
-        : user.creditBalance !== undefined
-          ? user.creditBalance
-          : 0;
-
     return res.json({
       success: true,
-      credit, // <-- frontend expects this key
+      credit: user.creditBalance,
       user: { name: user.name },
     });
   } catch (error) {
