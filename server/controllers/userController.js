@@ -77,7 +77,7 @@ const userCredits = async (req, res) => {
       return res.json({ success: false, message: "User not found" });
     }
 
-    // Support both possible field names
+    
     return res.json({
       success: true,
       credit: user.creditBalance,
